@@ -1,0 +1,15 @@
+Medico
+Professor
+Engenheiro
+Advogado
+Bombeiro
+Policial
+Cozinheiro
+Motorista
+Musico
+Padeiro
+Jardineiro
+Dentista
+Arquiteto
+Jornalista
+Ator

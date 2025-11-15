@@ -1,0 +1,15 @@
+Cadeira
+Mesa
+Computador
+Telefone
+Caneta
+Tesoura
+Garfo
+Colher
+Escova
+Televisao
+Janela
+Porta
+Abajur
+Martelo
+Chave

@@ -1,5 +1,9 @@
 #include <stdio.h>
 
+menuEscolherTema(){
+    
+}
+
 int main(){
 
     printf("Helo World\n");

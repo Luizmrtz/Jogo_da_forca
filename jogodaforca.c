@@ -23,7 +23,7 @@ int menuEscolherTema(char *nomeArquivo){
         switch (escolhaAtual) {
             case 1: strcpy(nomeArquivo, "animais.txt"); return 1;
             case 2: strcpy(nomeArquivo, "comida.txt"); return 1;
-            case 3: strcpy(nomeArquivo, "cor.txt"); return 1;
+            case 3: strcpy(nomeArquivo, "cores.txt"); return 1;
             case 4: strcpy(nomeArquivo, "objetos.txt"); return 1;
             case 5: strcpy(nomeArquivo, "profissoes.txt"); return 1;
             case 6: strcpy(nomeArquivo, "paises.txt"); return 1;

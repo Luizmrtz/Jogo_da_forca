@@ -1,54 +1,243 @@
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
+#include <stdlib.h>
+#include <time.h>
+#include <ctype.h>
+#include <windows.h>
 
-int menuEscolherTema(char *nomeArquivo){
-    int escolhaAtual = 0;
-    while (escolhaAtual < 1 || escolhaAtual > 7) { 
-        printf("\n--- JOGO DA FORCA ---\n");
-        printf("Escolha uma categoria:\n");
-        printf("1. Animal\n");
-        printf("2. Comida\n");
-        printf("3. Cor\n");
-        printf("4. Objetos\n");
-        printf("5. Profissoes\n");
-        printf("6. Paises\n");
-        printf("7. Sair do Jogo\n");
-        printf("Sua escolha: ");
+char* Arquivo_da_categoria(char categoria[30]){
 
-        if (scanf("%d", &escolhaAtual) != 1) {
-            escolhaAtual = 0; 
-        }
-
-        switch (escolhaAtual) {
-            case 1: strcpy(nomeArquivo, "animais.txt"); return 1;
-            case 2: strcpy(nomeArquivo, "comida.txt"); return 1;
-            case 3: strcpy(nomeArquivo, "cores.txt"); return 1;
-            case 4: strcpy(nomeArquivo, "objetos.txt"); return 1;
-            case 5: strcpy(nomeArquivo, "profissoes.txt"); return 1;
-            case 6: strcpy(nomeArquivo, "paises.txt"); return 1;
-            case 7: return 0; // Sair
-            default:
-                printf("\nOpcao invalida! Tente novamente.\n");
-        }
+    if(strcmp(categoria, "animais") == 0){
+        return "animais.txt";
     }
-    return 0;
+    
+    else if(strcmp(categoria, "comidas") == 0){
+        return "comida.txt";
+    }
+    
+    else if(strcmp(categoria, "cores") == 0){
+        return "cores.txt";
+    }
+    
+    else if(strcmp(categoria, "objetos") == 0){
+        return "objetos.txt";
+    }
+
+    else if(strcmp(categoria, "paises") == 0){
+        return "paises.txt";
+
+    }
+
+    else if(strcmp(categoria, "profissões") == 0 || strcmp(categoria, "profissoes") ==0){
+        return "profissoes.txt";
+    }
+
+    else{
+    return NULL;
+    }    
+}
+ 
+char* Sorteio_palavra(const char* arquivo){
+    FILE *f = fopen(arquivo, "r");
+
+    if(!f){
+        printf("Erro ao ler arquivo\n");
+        return 0;
+    }
+
+    char linha[200][50];
+    int total = 0;
+
+    while(total < 200 && fgets(linha[total], 50, f) != NULL){
+        linha[total][strcspn(linha[total], "\n")] = '\0';
+        total++;
+    }
+
+    fclose(f);
+
+    if(total == 0){
+        return NULL;
+    }
+
+    int indice = rand() % total;
+    char *palavra = malloc(strlen(linha[indice]) + 1);
+
+    if(!palavra){
+        printf("Erro\n");
+        return NULL;
+    }
+
+    strcpy(palavra, linha[indice]);
+    return palavra;
+}
+
+void Jogo_da_forca(const char *palavra){
+
+    time_t inicio = time(NULL);
+
+    int tamanho = strlen(palavra);
+    char exibicao[tamanho + 1];
+
+    char palavraLower[tamanho + 1];
+    for(int i = 0; i < tamanho; i++){
+        palavraLower[i] = tolower(palavra[i]);
+    }
+    palavraLower[tamanho] = '\0';
+
+    for(int i = 0; i < tamanho; i++){
+        exibicao[i] = '_';
+    }
+    exibicao[tamanho] = '\0';
+
+    int erros = 0;
+    int acertos = 0;
+    int tentativas = 6;
+
+    char usadas[50];
+    int total_usadas = 0;
+
+    while(erros < tentativas && acertos < tamanho){
+        system("cls");
+
+        printf(" %s\n", exibicao);
+        printf(" Erros: %d/%d \n", erros, tentativas);
+
+        printf(" Letras usadas: ");
+        for(int i = 0; i < total_usadas; i++){
+            printf("%c ", usadas[i]);
+        }
+        printf("\n");
+
+        char entrada[50];
+        printf("Digite uma letra ou tente adivinhar a palavra: ");
+        scanf(" %49s", entrada);
+
+        for(int i = 0; entrada[i]; i++){
+            entrada[i] = tolower(entrada[i]);
+        }
+
+        if(strlen(entrada) > 1){
+            if(strcmp(entrada, palavraLower) == 0){
+                time_t fim = time(NULL);
+                double tempo = difftime(fim, inicio);
+
+                printf("\nParabéns! Você acertou a palavra inteira!\n");
+                
+                printf("A palavra era: ");
+                for(int i = 0; i < tamanho; i++){
+                    printf("%c ", toupper(palavra[i]));
+                }
+
+                printf("\nTempo total: %.0f segundos.\n", tempo);
+                return;
+            }
+            else{
+                erros++;
+                continue;
+            }
+        }
+
+        char letra = entrada[0];
+
+        int repetida = 0;
+        for(int i = 0; i < total_usadas; i++){
+            if(usadas[i] == letra){
+                repetida = 1;
+                break;
+            }
+        }
+
+        if(repetida){
+            continue;
+        }
+
+        usadas[total_usadas] = letra;
+        total_usadas++;
+
+        printf("Posições encontradas: ");
+
+        int encontrou = 0;
+        for (int i = 0; i < tamanho; i++) {
+            if (palavraLower[i] == letra && exibicao[i] == '_') {
+                exibicao[i] = palavra[i];
+                acertos++;
+                encontrou = 1;
+                printf("%d ", i + 1);
+            }
+        }
+
+        if (!encontrou) {
+            printf("Nenhuma");
+            erros++;
+        }
+
+        printf("\n");
+    }
+
+    time_t fim = time(NULL);
+    double tempo = difftime(fim, inicio);
+        
+    if (acertos == tamanho) {
+        printf("\nParabéns! Você ganhou!\n");
+    }
+
+    else {
+        printf("\nVocê perdeu!\n");
+    }
+
+    printf("A palavra era: ");
+    for(int i = 0; i < tamanho; i++){
+        printf("%c ", toupper(palavra[i]));
+    }
+
+    printf("\nTotal de erros cometidos: %d\n", erros);
+    printf("Tempo total: %.0f segundos.\n", tempo);
 }
 
 int main(){
 
-    char nomeArquivoTema[30];
-    
-    if (menuEscolherTema(nomeArquivoTema) == 0) {
-        printf("Saindo do jogo...\n");
+    SetConsoleOutputCP(65001);
+    SetConsoleCP(65001);
+
+    srand(time(NULL));
+    char categoria[30];
+
+    printf("\n JOGO DA FORCA \n");
+    printf("Escolha qual categoria vc deseja jogar, sendo elas:\n");
+    printf("Animais\n");
+    printf("Comidas\n");
+    printf("Cores\n");
+    printf("Objetos\n");
+    printf("Paises\n");
+    printf("Profissões\n");
+
+    printf("\nInsira a categoria para começar a jogar: ");
+    fflush(stdout);
+
+    fgets(categoria, 30, stdin);
+    categoria[strcspn(categoria, "\n")] = '\0';
+
+    for(int i=0; categoria[i]; i++){
+        categoria[i] = tolower(categoria[i]);
+    }
+
+    char *arquivo = Arquivo_da_categoria(categoria);
+
+    if(arquivo == NULL){
+        printf("Categoria invalida");
         return 0;
     }
 
-    printf("Helo World\n");
-    printf("Teste\n");
-    for(int i = 0; i < 2; i++){
-        printf("Teste aprovado!\n");
+    char *palavra = Sorteio_palavra(arquivo);
+
+    if (palavra) {
+        printf("\nPalavra sorteada com sucesso\n");
+        Sleep(1000);
+    } else {
+        printf("Nao foi possivel sortear palavra.\n");
     }
 
+    Jogo_da_forca(palavra);
+    free(palavra);
     return 0;
 }

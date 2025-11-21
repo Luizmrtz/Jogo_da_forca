@@ -228,6 +228,7 @@ int main(){
         return 0;
     }
 
+<<<<<<< HEAD
     char *palavra = Sorteio_palavra(arquivo);
 
     if (palavra) {
@@ -236,6 +237,9 @@ int main(){
     } else {
         printf("Nao foi possivel sortear palavra.\n");
     }
+=======
+
+>>>>>>> d0830a5a112e853dc57f7ff5c60bbbca9cd3c848
 
     Jogo_da_forca(palavra);
     free(palavra);
